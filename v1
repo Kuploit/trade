@@ -1,0 +1,211 @@
+-- TradeV1 by Kuploit
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+
+-- Main UI
+local ui = Instance.new("ScreenGui")
+ui.Name = "TradeV1_Kuploit"
+ui.ResetOnSpawn = false
+ui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ui.Parent = game:GetService("CoreGui")
+
+-- Main Container
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 220, 0, 150)
+mainFrame.Position = UDim2.new(0.5, -110, 0.7, -75)
+mainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+mainFrame.BorderSizePixel = 0
+mainFrame.ClipsDescendants = true
+mainFrame.Parent = ui
+
+local mainCorner = Instance.new("UICorner")
+mainCorner.CornerRadius = UDim.new(0, 8)
+mainCorner.Parent = mainFrame
+
+local mainStroke = Instance.new("UIStroke")
+mainStroke.Color = Color3.fromRGB(50, 50, 60)
+mainStroke.Thickness = 2
+mainStroke.Parent = mainFrame
+
+-- Header
+local header = Instance.new("Frame")
+header.Size = UDim2.new(1, 0, 0, 30)
+header.Position = UDim2.new(0, 0, 0, 0)
+header.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+header.BorderSizePixel = 0
+header.Parent = mainFrame
+
+local headerCorner = Instance.new("UICorner")
+headerCorner.CornerRadius = UDim.new(0, 8)
+headerCorner.Parent = header
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(0, 150, 1, 0)
+title.Position = UDim2.new(0, 10, 0, 0)
+title.BackgroundTransparency = 1
+title.Text = "TradeV1 by Kuploit"
+title.TextColor3 = Color3.fromRGB(200, 200, 200)
+title.TextSize = 14
+title.Font = Enum.Font.GothamBold
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = header
+
+-- Minimize Button
+local minimizeBtn = Instance.new("TextButton")
+minimizeBtn.Size = UDim2.new(0, 30, 1, 0)
+minimizeBtn.Position = UDim2.new(1, -30, 0, 0)
+minimizeBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+minimizeBtn.BorderSizePixel = 0
+minimizeBtn.Text = "_"
+minimizeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+minimizeBtn.TextSize = 16
+minimizeBtn.Font = Enum.Font.GothamBold
+minimizeBtn.Parent = header
+
+local minimizeCorner = Instance.new("UICorner")
+minimizeCorner.CornerRadius = UDim.new(0, 8)
+minimizeCorner.Parent = minimizeBtn
+
+-- Content Frame
+local contentFrame = Instance.new("Frame")
+contentFrame.Size = UDim2.new(1, 0, 1, -30)
+contentFrame.Position = UDim2.new(0, 0, 0, 30)
+contentFrame.BackgroundTransparency = 1
+contentFrame.Parent = mainFrame
+
+-- Status Label
+local statusLabel = Instance.new("TextLabel")
+statusLabel.Size = UDim2.new(0.9, 0, 0, 20)
+statusLabel.Position = UDim2.new(0.05, 0, 0.1, 0)
+statusLabel.BackgroundTransparency = 1
+statusLabel.Text = "Status: Ready"
+statusLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
+statusLabel.TextSize = 12
+statusLabel.Font = Enum.Font.Gotham
+statusLabel.TextXAlignment = Enum.TextXAlignment.Left
+statusLabel.Parent = contentFrame
+
+-- Toggle Button
+local toggleBtn = Instance.new("TextButton")
+toggleBtn.Size = UDim2.new(0.9, 0, 0, 40)
+toggleBtn.Position = UDim2.new(0.05, 0, 0.4, 0)
+toggleBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+toggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleBtn.Text = "Freeze Trade"
+toggleBtn.Font = Enum.Font.GothamBold
+toggleBtn.TextSize = 14
+toggleBtn.AutoButtonColor = false
+toggleBtn.Parent = contentFrame
+
+local btnCorner = Instance.new("UICorner")
+btnCorner.CornerRadius = UDim.new(0, 6)
+btnCorner.Parent = toggleBtn
+
+local btnStroke = Instance.new("UIStroke")
+btnStroke.Color = Color3.fromRGB(80, 180, 180)
+btnStroke.Thickness = 1
+btnStroke.Parent = toggleBtn
+
+-- State Management
+local isFrozen = false
+local isMinimized = false
+
+-- Button Animations
+toggleBtn.MouseEnter:Connect(function()
+    TweenService:Create(toggleBtn, TweenInfo.new(0.15), {
+        BackgroundColor3 = Color3.fromRGB(50, 50, 60)
+    }):Play()
+end)
+
+toggleBtn.MouseLeave:Connect(function()
+    TweenService:Create(toggleBtn, TweenInfo.new(0.15), {
+        BackgroundColor3 = isFrozen and Color3.fromRGB(60, 35, 40) or Color3.fromRGB(40, 40, 50)
+    }):Play()
+end)
+
+-- Core Functionality
+local function freezeTrade(state)
+    isFrozen = state
+    
+    if state then
+        toggleBtn.Text = "Unfreeze Trade"
+        toggleBtn.BackgroundColor3 = Color3.fromRGB(60, 35, 40)
+        btnStroke.Color = Color3.fromRGB(180, 80, 80)
+        statusLabel.Text = "Status: Trades Frozen"
+        statusLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+        
+        -- Trade freeze logic here
+        -- Example: if player:FindFirstChild("Trade") then player.Trade:Destroy() end
+        
+    else
+        toggleBtn.Text = "Freeze Trade"
+        toggleBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+        btnStroke.Color = Color3.fromRGB(80, 180, 180)
+        statusLabel.Text = "Status: Ready"
+        statusLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
+        
+        -- Trade unfreeze logic here
+    end
+end
+
+-- Toggle Handler
+toggleBtn.MouseButton1Click:Connect(function()
+    freezeTrade(not isFrozen)
+end)
+
+-- Minimize Functionality
+local function toggleMinimize()
+    isMinimized = not isMinimized
+    
+    if isMinimized then
+        TweenService:Create(mainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {
+            Size = UDim2.new(0, 220, 0, 30)
+        }):Play()
+        minimizeBtn.Text = "+"
+    else
+        TweenService:Create(mainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {
+            Size = UDim2.new(0, 220, 0, 150)
+        }):Play()
+        minimizeBtn.Text = "_"
+    end
+end
+
+minimizeBtn.MouseButton1Click:Connect(toggleMinimize)
+
+-- Draggable UI
+local dragStart, startPos, dragging
+
+header.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = mainFrame.Position
+    end
+end)
+
+UIS.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - dragStart
+        mainFrame.Position = UDim2.new(
+            startPos.X.Scale, startPos.X.Offset + delta.X,
+            startPos.Y.Scale, startPos.Y.Offset + delta.Y
+        )
+    end
+end)
+
+UIS.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = false
+    end
+end)
+
+-- Anti-AFK
+local virtualUser = game:GetService("VirtualUser")
+game:GetService("Players").LocalPlayer.Idled:Connect(function()
+    virtualUser:CaptureController()
+    virtualUser:ClickButton2(Vector2.new())
+end)
